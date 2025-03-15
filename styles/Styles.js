@@ -1,71 +1,63 @@
-import { StyleSheet } from "react-native";
-import { Dimensions } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { MD3LightTheme } from "react-native-paper";
 
 export const styles = StyleSheet.create({
-    background: {
-        backgroundColor: '#f4f7fb', // Vaaleansininen harmaa tausta
-    },
     container: {
         flex: 1,
-        marginHorizontal: 10,
-        gap: 10,
+        marginHorizontal: 12,
     },
     loginPage: {
         flex: 1,
     },
     loginContainer: {
         flex: 1,
-        margin: 10,
-        gap: 10,
-        backgroundColor: '#ffffff', // Valkoinen tausta login-sivulle
-        borderRadius: 10, // Pyöristetyt kulmat
-        padding: 20,
+        margin: 12,
+        padding: 18,
+        backgroundColor: '#fff',
+        borderRadius: 12,
     },
     map: {
-        width: Dimensions.get('window').width - 20,
-        height: Dimensions.get('window').height - 20,
-        marginVertical: 10,
+        width: Dimensions.get('window').width - 24,
+        height: Dimensions.get('window').height - 24,
+        marginVertical: 12,
     },
     headerImage: {
-        height: 150,
+        height: 160,
         width: Dimensions.get('window').width,
     },
     headline: {
-        justifyContent: 'center',
         textAlign: 'center',
-        marginVertical: 20,
-        fontSize: 28,
-        color: '#1E3A8A', // Tummansininen otsikko
+        marginVertical: 18,
+        fontSize: 26,
+        color: '#1D4ED8',
     },
     subHeadline: {
-        justifyContent: 'center',
         textAlign: 'center',
-        marginBottom: 20,
-        fontSize: 18,
-        color: '#3B82F6', // Sininen alateksti
+        marginBottom: 18,
+        fontSize: 17,
+        color: '#2563EB',
     },
     itemView: {
         flexDirection: 'row',
-        gap: 10,
+        gap: 12,
     },
     item: {
-        marginVertical: 10,
-        padding: 10,
+        marginVertical: 12,
+        padding: 12,
         borderWidth: 1,
-        borderRadius: 3,
-        borderColor: '#CBD5E1', // Vaaleansininen reunus
+        borderRadius: 6,
+        borderColor: '#94A3B8',
     },
     itemText: {
         flex: 2,
-        color: '#4B5563', // Tummanharmaa teksti
+        color: '#374151',
     },
     mapIcon: {
         flex: 1,
         alignItems: 'flex-end',
     },
     rating: {
-        alignItems: 'space-between',
+        justifyContent: 'space-between',
     },
     image: {
         width: 100,
@@ -75,40 +67,40 @@ export const styles = StyleSheet.create({
     },
     countryView: {
         flexDirection: 'row',
-        gap: 10,
+        gap: 12,
     },
     modal: {
         height: 100,
         marginHorizontal: 40,
-        padding: 20,
+        padding: 18,
         alignItems: 'center',
-        backgroundColor: '#f1f5f9', // Vaaleanharmaa modalin tausta
-        borderRadius: 8, // Pyöristetyt kulmat
+        backgroundColor: '#E2E8F0',
+        borderRadius: 10,
     },
 });
 
 export const Theme = {
     ...MD3LightTheme,
-    roundness: 8,
+    roundness: 10,
     colors: {
         ...MD3LightTheme.colors,
-        primary: "#3B82F6", // Sininen pääväri
-        onPrimary: "#FFFFFF", // Valkoinen teksti pääväriin
-        primaryContainer: "#BFDBFE", // Vaaleansininen sävy
-        onPrimaryContainer: "#1E40AF", // Tummansininen sävy
-        secondary: "#6B7280", // Tummanharmaa
-        onSecondary: "#FFFFFF", // Valkoinen teksti
-        secondaryContainer: "#D1D5DB", // Vaaleanharmaa
-        onSecondaryContainer: "#4B5563", // Tummanharmaa
-        background: "#FFFFFF", // Valkoinen tausta
-        onBackground: "#1F2937", // Tummanharmaa teksti taustalle
-        surface: "#FFFFFF", // Valkoinen pinta
-        onSurface: "#1F2937", // Tummanharmaa teksti pinnalla
-        surfaceVariant: "#E5E7EB", // Vaaleanharmaa
-        onSurfaceVariant: "#4B5563", // Tummanharmaa
-        error: "#EF4444", // Punainen virheväri
-        onError: "#FFFFFF", // Valkoinen teksti virheelle
-        errorContainer: "#FEE2E2", // Vaaleanpunainen virhealue
-        onErrorContainer: "#9B2C2C", // Tumma punainen virhealueelle
+        primary: "#2563EB",
+        onPrimary: "#FFFFFF",
+        primaryContainer: "#DBEAFE",
+        onPrimaryContainer: "#1E3A8A",
+        secondary: "#6B7280",
+        onSecondary: "#FFFFFF",
+        secondaryContainer: "#E5E7EB",
+        onSecondaryContainer: "#374151",
+        background: "#F9FAFB",
+        onBackground: "#1F2937",
+        surface: "#FFFFFF",
+        onSurface: "#1F2937",
+        surfaceVariant: "#E2E8F0",
+        onSurfaceVariant: "#374151",
+        error: "#DC2626",
+        onError: "#FFFFFF",
+        errorContainer: "#FECACA",
+        onErrorContainer: "#991B1B",
     },
 };
