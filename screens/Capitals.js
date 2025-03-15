@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { SafeAreaView, ScrollView, View, Image } from "react-native";
 import { Button, Modal, Portal, Searchbar, Text } from "react-native-paper";
@@ -6,103 +6,88 @@ import { styles, Theme } from "../styles/Styles";
 
 export function Capitals() {
     const [data, setData] = useState([]);
-    const [country, setCountry] = useState('');
-    const [countryName, setCountryName] = useState('');
-    const [capital, setCapital] = useState('');
-    const [flag, setFlag] = useState('');
+    const [searchQuery, setSearchQuery] = useState("");
+    const [countryDetails, setCountryDetails] = useState({ name: "", capital: "", flag: "" });
+    const [alertMessage, setAlertMessage] = useState("");
+    const [modalVisible, setModalVisible] = useState(false);
 
-    const [alert, setAlert] = useState('');
-    const [visible, setVisible] = useState(false);
+    const showModal = () => setModalVisible(true);
+    const hideModal = () => setModalVisible(false);
 
-    const showModal = () => setVisible(true);
-    const hideModal = () => setVisible(false);
-
-    const handleSearch = () => {
-        // Hakee tietoja maasta ja pääkaupungista
-        if (country.trim() === '') {
-            setAlert('Please enter a country name');
+    const fetchCountryData = useCallback(() => {
+        if (!searchQuery.trim()) {
+            setAlertMessage("Please enter a country name");
             showModal();
             return;
         }
 
-        axios
-            .get(`https://restcountries.com/v3.1/name/${country}`)
-            .then((resp) => {
-                const data = resp.data[0];
-                setCountryName(data.name.common);
-                setCapital(data.capital ? data.capital[0] : 'No capital');
-                setFlag(data.flags.png);
-                setCountry('');
+        axios.get(`https://restcountries.com/v3.1/name/${searchQuery}`)
+            .then((response) => {
+                const country = response.data[0];
+                setCountryDetails({
+                    name: country.name.common,
+                    capital: country.capital ? country.capital[0] : "No capital",
+                    flag: country.flags.png,
+                });
+                setSearchQuery("");
             })
-            .catch((error) => {
-                setAlert('Country not found. Please try again.');
+            .catch(() => {
+                setAlertMessage("Country not found. Please try again.");
                 showModal();
             });
-    };
+    }, [searchQuery]);
 
-    // Lisää maata ja pääkaupunkia listaan
     useEffect(() => {
-        if (countryName && capital && flag) {
+        if (countryDetails.name && countryDetails.capital && countryDetails.flag) {
             setData((prevData) => {
-                if (!prevData.some((item) => item.countryName === countryName)) {
-                    return [
-                        ...prevData,
-                        { countryName, capital, flag },
-                    ];
+                if (!prevData.some((item) => item.name === countryDetails.name)) {
+                    return [...prevData, countryDetails];
                 }
                 return prevData;
             });
         }
-    }, [countryName, capital, flag]);
+    }, [countryDetails]);
 
     useEffect(() => {
-        if (alert) {
+        if (alertMessage) {
             showModal();
         }
-    }, [alert]);
+    }, [alertMessage]);
 
-    // Filtteröi maita ja pääkaupunkeja hakusanan perusteella
-    const filteredData = data.filter((item) => {
-        const lowerCaseSearch = country.toLowerCase();
-        return (
-            item.countryName.toLowerCase().includes(lowerCaseSearch) ||
-            item.capital.toLowerCase().includes(lowerCaseSearch)
-        );
+    const filteredResults = data.filter((item) => {
+        const query = searchQuery.toLowerCase();
+        return item.name.toLowerCase().includes(query) || item.capital.toLowerCase().includes(query);
     });
 
     return (
         <SafeAreaView style={[styles.scroll, styles.container]}>
             <Portal>
-                <Modal style={styles.modal} visible={visible} onDismiss={hideModal}>
-                    <Text>{alert}</Text>
+                <Modal style={styles.modal} visible={modalVisible} onDismiss={hideModal}>
+                    <Text>{alertMessage}</Text>
                 </Modal>
             </Portal>
 
             <Text style={styles.headline} variant="headlineSmall">
-                Search Country by name
+                Search Country by Name
             </Text>
 
             <Searchbar
                 placeholder="Search Country or Capital"
-                onChangeText={setCountry}
-                value={country}
+                onChangeText={setSearchQuery}
+                value={searchQuery}
             />
-            <Button mode="contained" onPress={handleSearch}>
+            <Button mode="contained" onPress={fetchCountryData}>
                 Search
             </Button>
 
             <ScrollView>
-                {filteredData.map((item, index) => (
+                {filteredResults.map((item, index) => (
                     <View
-                        style={[
-                            styles.item,
-                            styles.countryView,
-                            { backgroundColor: Theme.colors.elevation.level3 },
-                        ]}
                         key={index}
+                        style={[styles.item, styles.countryView, { backgroundColor: Theme.colors.elevation.level3 }]}
                     >
                         <View style={styles.itemText}>
-                            <Text variant="titleMedium">{item.countryName}</Text>
+                            <Text variant="titleMedium">{item.name}</Text>
                             <Text variant="bodyLarge">{item.capital}</Text>
                         </View>
                         <Image style={styles.image} source={{ uri: item.flag }} />

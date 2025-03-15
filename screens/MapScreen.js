@@ -1,35 +1,31 @@
-import { StatusBar } from 'expo-status-bar'
-import { useState, useContext, useEffect } from 'react'
-import { SafeAreaView } from 'react-native'
-import MapView from 'react-native-maps'
-import * as Location from 'expo-location'
-import { LocationContext } from '../contexts/locationContext'
-import { styles } from "../styles/Styles"
-
+import { StatusBar } from 'expo-status-bar';
+import { useState, useEffect, useContext, useCallback } from 'react';
+import { SafeAreaView } from 'react-native';
+import MapView from 'react-native-maps';
+import * as Location from 'expo-location';
+import { LocationContext } from '../contexts/locationContext';
+import { styles } from '../styles/Styles';
 
 export function MapScreen() {
+    const { location } = useContext(LocationContext);
+    const [coords, setCoords] = useState({ latitude: 65.0120888, longitude: 25.4650773 });
 
-    const { location } = useContext(LocationContext)
-
-    const [latitude, setLatitude] = useState(65.0120888)
-    const [longnitude, setLongnitude] = useState(25.465077299999997)
+    const getLocation = useCallback(async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            console.warn('No location permission granted');
+            return;
+        }
+        const [place] = await Location.geocodeAsync(location);
+        if (place) {
+            setCoords({ latitude: place.latitude, longitude: place.longitude });
+        }
+    }, [location]);
 
     useEffect(() => {
+        getLocation();
+    }, [getLocation]);
 
-        async function getLocation() {
-
-            let { status } = await Location.requestForegroundPermissionsAsync()
-            if (status !== 'granted') {
-                console.log('No permission')
-                return
-            }
-            const place = await Location.geocodeAsync(location)
-            setLatitude(place[0].latitude)
-            setLongnitude(place[0].longitude)    
-        }
-        getLocation()
-    }, [location]
-    )
     return (
         <SafeAreaView style={styles.container}>
             <MapView
@@ -38,16 +34,14 @@ export function MapScreen() {
                     latitude: 65.0800,
                     longitude: 25.4800,
                     latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421
+                    longitudeDelta: 0.0421,
                 }}
                 region={{
-                    latitude: latitude,
-                    longitude: longnitude,
+                    ...coords,
                     latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421
+                    longitudeDelta: 0.0421,
                 }}
             />
         </SafeAreaView>
-
-    )
+    );
 }

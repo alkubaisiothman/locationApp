@@ -1,58 +1,61 @@
-import { Alert, View, Image } from "react-native"
-import { Button, TextInput, Text } from "react-native-paper"
-import { styles } from "../styles/Styles"
-import { loginUser } from "../firebase/FirebaseAuthController"
-import { useState } from "react"
-import { SafeAreaView } from "react-native-safe-area-context"
-
-
+import { Alert, View, Image } from "react-native";
+import { Button, TextInput, Text } from "react-native-paper";
+import { styles } from "../styles/Styles";
+import { loginUser } from "../firebase/FirebaseAuthController";
+import { useState, useCallback, useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export function Login() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMsg, setErrorMsg] = useState(null);
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState()
+    const handleSignIn = useCallback(async () => {
+        const error = await loginUser(email, password);
+        setErrorMsg(error);
+    }, [email, password]);
 
-    async function singInAction() {
-        setError(await loginUser(email, password))
-    }
-
-    if (error) {
-        Alert.alert(error)
-        setError(null)
-    }
+    useEffect(() => {
+        if (errorMsg) {
+            Alert.alert(errorMsg);
+            setErrorMsg(null);
+        }
+    }, [errorMsg]);
 
     return (
-        <SafeAreaView style={styles.loginPage} >
-            <Image style={styles.headerImage} source={require('../assets/city.jpg')}/>
+        <SafeAreaView style={styles.loginPage}>
+            <Image style={styles.headerImage} source={require("../assets/city.jpg")} />
+            
             <View>
-    <Text style={styles.headline} variant="headlineSmall">Welcome to Travel Explorer!</Text>
-    <Text style={styles.subHeadline} variant="bodyLarge">Log in to discover new destinations, save your favorite spots, and share your travel experiences with others.</Text>
-</View>
+                <Text style={styles.headline} variant="headlineSmall">
+                    Welcome to Travel Explorer!
+                </Text>
+                <Text style={styles.subHeadline} variant="bodyLarge">
+                    Log in to discover new destinations, save your favorite spots, and share your travel experiences with others.
+                </Text>
+            </View>
 
             <View style={styles.loginContainer}>
                 <Text variant="headlineSmall">Login</Text>
                 <TextInput
-                    mode='flat'
-                    label='Email'
+                    mode="flat"
+                    label="Email"
                     value={email}
                     onChangeText={setEmail}
-                    left={<TextInput.Icon icon={'email'} />}
+                    left={<TextInput.Icon icon={"email"} />}
                 />
                 <TextInput
-                    mode='flat'
-                    type='password'
-                    label='password'
+                    mode="flat"
+                    label="Password"
                     value={password}
                     onChangeText={setPassword}
-                    secureTextEntry={true}
-                    left={<TextInput.Icon icon={'lock'} />}
+                    secureTextEntry
+                    left={<TextInput.Icon icon={"lock"} />}
                 />
-                <Button
-                    mode="contained"
-                    onPress={singInAction}
-                >Login</Button>
+                <Button mode="contained" onPress={handleSignIn}>
+                    Login
+                </Button>
             </View>
         </SafeAreaView>
-    )
+    );
 }
